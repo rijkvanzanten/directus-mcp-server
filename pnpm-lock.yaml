@@ -8,12 +8,21 @@ importers:
 
   .:
     dependencies:
+      '@directus/sdk':
+        specifier: 19.0.1
+        version: 19.0.1
       '@modelcontextprotocol/sdk':
         specifier: 1.7.0
         version: 1.7.0
+      dotenv:
+        specifier: 16.4.7
+        version: 16.4.7
       zod:
         specifier: 3.24.2
         version: 3.24.2
+      zod-to-json-schema:
+        specifier: 3.24.4
+        version: 3.24.4(zod@3.24.2)
     devDependencies:
       '@directus/tsconfig':
         specifier: 3.0.0
@@ -29,6 +38,10 @@ importers:
         version: 5.8.2
 
 packages:
+
+  '@directus/sdk@19.0.1':
+    resolution: {integrity: sha512-6KwWedA/vxrMN2aRm5L52TEgB+42vkz0Ae8kwOitHuBPT4VWtUNOXenzaHnZyXyNrEgh/VBLJ36f3UEe3b/Wfw==}
+    engines: {node: '>=22'}
 
   '@directus/tsconfig@3.0.0':
     resolution: {integrity: sha512-b0BWboH2W++Zx/I/PsMWBeDmMgXZIEOVP2JUh6gWXh3L/TaLuFF/1LG8gv7ise4WDMnW69Vum5kSroNTQyqlUQ==}
@@ -106,6 +119,10 @@ packages:
   destroy@1.2.0:
     resolution: {integrity: sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==}
     engines: {node: '>= 0.8', npm: 1.2.8000 || >= 1.4.16}
+
+  dotenv@16.4.7:
+    resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
+    engines: {node: '>=12'}
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -392,6 +409,8 @@ packages:
 
 snapshots:
 
+  '@directus/sdk@19.0.1': {}
+
   '@directus/tsconfig@3.0.0': {}
 
   '@modelcontextprotocol/sdk@1.7.0':
@@ -469,6 +488,8 @@ snapshots:
   depd@2.0.0: {}
 
   destroy@1.2.0: {}
+
+  dotenv@16.4.7: {}
 
   dunder-proto@1.0.1:
     dependencies:

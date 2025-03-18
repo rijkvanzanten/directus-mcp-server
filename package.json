@@ -26,8 +26,11 @@
 		"maxLineLength": 100
 	},
 	"dependencies": {
+		"@directus/sdk": "19.0.1",
 		"@modelcontextprotocol/sdk": "1.7.0",
-		"zod": "3.24.2"
+		"dotenv": "16.4.7",
+		"zod": "3.24.2",
+		"zod-to-json-schema": "3.24.4"
 	},
 	"devDependencies": {
 		"@directus/tsconfig": "3.0.0",
