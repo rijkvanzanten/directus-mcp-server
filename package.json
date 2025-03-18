@@ -1,5 +1,5 @@
 {
-	"name": "directus-mcp-server",
+	"name": "@rijk/directus-mcp-server",
 	"version": "0.0.1",
 	"description": "Model context protocol server for Directus",
 	"main": "dist/index.js",
