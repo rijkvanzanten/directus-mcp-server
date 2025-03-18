@@ -8,7 +8,7 @@ import {
 	ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { directus } from "./directus.js";
-import { tools } from "./tools/index.js";
+import { getTools } from "./tools/index.js";
 import { toMpcTools } from "./utils/to-mpc-tools.js";
 
 async function main() {
@@ -30,6 +30,8 @@ async function main() {
 		CallToolRequestSchema,
 		async (request: CallToolRequest) => {
 			console.error("Received CallToolRequest:", request);
+
+			const tools = await getTools();
 
 			try {
 				const tool = tools.find((definition) => {
@@ -64,6 +66,8 @@ async function main() {
 
 	server.setRequestHandler(ListToolsRequestSchema, async () => {
 		console.error("Received ListToolsRequest");
+
+		const tools = await getTools();
 
 		return { tools: toMpcTools(tools) };
 	});
