@@ -56,27 +56,9 @@ Read items from a collection. The MCP server will automatically generate one too
 
 Get information about the current user. Effectively the `/users/me` endpoint.
 
-## Installation
+### Read Collections
 
-```
-pnpm add @rijk/directus-mcp-server
-```
-
-## Development
-
-To build a `dist` copy of the project:
-
-```
-pnpm build
-```
-
-### Dev mode
-
-To watch for changes and auto restart the server, use:
-
-```
-pnpm dev
-```
+Return what collections/fields are available in the system
 
 ## License
 
