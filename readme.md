@@ -19,8 +19,7 @@ Then configure Claude AI to use the `npm` package as remote server:
 {
 	"mcpServers": {
 		"directus": {
-			"command": "npx",
-			"args": ["-y", "@rijk/directus-mcp-server"],
+			"command": "directus-mcp-server",
 			"env": {
 				"DIRECTUS_URL": "<your Directus instance URL>",
 				"DIRECTUS_TOKEN": "<your Directus user token>"
@@ -38,10 +37,12 @@ Then configure Claude AI to use the `npm` package as remote server:
 
 ```json
 {
-	// ...
-	"command": "node",
-	"args": ["/path/to/directus-mcp-server/dist/index.js"]
-	// ...
+	"mcpServers": {
+		"directus": {
+			"command": "node",
+			"args": ["/path/to/directus-mcp-server/dist/index.js"]
+		}
+	}
 }
 ```
 
