@@ -1,11 +1,15 @@
-import * as z from 'zod';
 import dotenv from 'dotenv';
+import * as z from 'zod';
 
 const configSchema = z.object({
 	DIRECTUS_URL: z.string(),
 	DIRECTUS_TOKEN: z.string(),
 });
 
-dotenv.config();
+export const createConfig = () => {
+	dotenv.config();
 
-export const config = configSchema.parse(process.env);
+	return configSchema.parse(process.env);
+}
+
+export type Config = z.infer<typeof configSchema>;

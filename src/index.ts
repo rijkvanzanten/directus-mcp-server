@@ -7,12 +7,17 @@ import {
 	CallToolRequestSchema,
 	ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { directus } from "./directus.js";
+import { createConfig } from "./config.js";
+import { createDirectus } from "./directus.js";
 import { getTools } from "./tools/index.js";
 import { toMpcTools } from "./utils/to-mpc-tools.js";
+import { fetchSchema } from "./utils/fetch-schema.js";
 
 async function main() {
-	console.error("Starting Directus MCP Server...");
+	const config = createConfig();
+	const directus = createDirectus(config);
+	const schema = await fetchSchema(directus);
+	const tools = getTools(schema);
 
 	const server = new Server(
 		{
@@ -26,12 +31,18 @@ async function main() {
 		},
 	);
 
+	// server.sendLoggingMessage({
+	// 	level: "info",
+	// 	data: "Server started successfully",
+	// });
+
 	server.setRequestHandler(
 		CallToolRequestSchema,
 		async (request: CallToolRequest) => {
-			console.error("Received CallToolRequest:", request);
-
-			const tools = await getTools();
+			// server.sendLoggingMessage({
+			// 	level: "debug",
+			// 	data: `Received CallToolRequests: ${request}`,
+			// });
 
 			try {
 				const tool = tools.find((definition) => {
@@ -46,7 +57,7 @@ async function main() {
 
 				const args = inputSchema.parse(request.params.arguments);
 
-				return await handler(directus, args);
+				return await handler(directus, args, { schema });
 			} catch (error) {
 				console.error("Error executing tool:", error);
 
@@ -54,9 +65,7 @@ async function main() {
 					content: [
 						{
 							type: "text",
-							text: JSON.stringify({
-								error: error instanceof Error ? error.message : String(error),
-							}),
+							text: JSON.stringify(error),
 						},
 					],
 				};
@@ -65,20 +74,27 @@ async function main() {
 	);
 
 	server.setRequestHandler(ListToolsRequestSchema, async () => {
-		console.error("Received ListToolsRequest");
-
-		const tools = await getTools();
+		// server.sendLoggingMessage({
+		// 	level: "debug",
+		// 	data: "Received ListToolsRequest",
+		// });
 
 		return { tools: toMpcTools(tools) };
 	});
 
 	const transport = new StdioServerTransport();
 
-	console.error("Connecting server to transport...");
+	// server.sendLoggingMessage({
+	// 	level: "debug",
+	// 	data: "Connecting server to transport...",
+	// });
 
 	await server.connect(transport);
 
-	console.error("Directus MCP Server running on stdio");
+	// server.sendLoggingMessage({
+	// 	level: "debug",
+	// 	data: "Directus MCP Server running on stdio",
+	// });
 }
 
 main().catch((error) => {
