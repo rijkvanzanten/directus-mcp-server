@@ -50,7 +50,23 @@ Then configure Claude AI to use the `npm` package as remote server:
 
 ### Read Items
 
-Read items from a collection. The MCP server will automatically generate one tool per collection. It currently accepts `fields`, `sort`, and `limit` as parameters
+The `read-items` tool allows you to read items from any Directus collection by providing the collection name as a parameter.
+
+Parameters:
+- `collection`: (required) The name of the collection to read from
+- `fields`: (optional) Array of field names to return
+- `sort`: (optional) Field to sort by (prefix with `-` for descending order)
+- `limit`: (optional) Maximum number of items to return
+
+Example:
+```json
+{
+  "collection": "articles",
+  "fields": ["id", "title", "date_published"],
+  "sort": "-date_published",
+  "limit": 10
+}
+```
 
 ### Read Current User
 
@@ -58,7 +74,7 @@ Get information about the current user. Effectively the `/users/me` endpoint.
 
 ### Read Collections
 
-Return what collections/fields are available in the system
+Return what collections/fields are available in the system. Use this tool first to discover available collections before using the `read-items` tool.
 
 ## License
 
