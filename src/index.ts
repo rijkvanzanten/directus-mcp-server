@@ -17,7 +17,7 @@ async function main() {
 	const config = createConfig();
 	const directus = createDirectus(config);
 	const schema = await fetchSchema(directus);
-	const tools = getTools(schema);
+	const tools = getTools();
 
 	const server = new Server(
 		{

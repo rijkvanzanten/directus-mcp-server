@@ -1,48 +1,88 @@
 import { readItems } from "@directus/sdk";
 import * as z from "zod";
 import type { Schema } from "../types/schema.js";
-import type { ToolDefinition } from "../types/tool.js";
 import { defineTool } from "../utils/define-tool.js";
 
-const createInputSchema = (input: string[]) => {
-	if (input.length === 0) {
-		return z.object({});
-	}
+export const createGenericReadItemsTool = () => {
+	return defineTool("read-items", {
+		description:
+			"Read items from any collection. Fields and sort options are validated against the schema.",
+		inputSchema: z.object({
+			collection: z
+				.string()
+				.describe("The name of the collection to read from"),
+			fields: z.array(z.string()).optional().describe("Fields to return"),
+			sort: z
+				.string()
+				.optional()
+				.describe("Field to sort by (prefix with - for descending)"),
+			limit: z
+				.number()
+				.optional()
+				.describe("Maximum number of items to return"),
+		}),
+		handler: async (directus, query, { schema: contextSchema }) => {
+			const { collection, fields, sort, ...otherParams } = query;
 
-	if (input.length === 1) {
-		const field = input[0] as string;
+			try {
+				if (!contextSchema[collection]) {
+					throw new Error(
+						`Collection "${collection}" not found. Use read-collections tool first.`,
+					);
+				}
 
-		return z.object({
-			fields: z.array(z.literal(field)),
-			sort: z.enum([field, `-${field}`]),
-			limit: z.number(),
-		});
-	}
+				const availableFields = contextSchema[collection] || [];
 
-	const fields = input as [string, ...string[]];
+				if (fields && fields.length > 0) {
+					const invalidFields = fields.filter(
+						(field: string) => !availableFields.includes(field),
+					);
+					if (invalidFields.length > 0) {
+						throw new Error(
+							`Invalid fields for "${collection}": ${invalidFields.join(", ")}`,
+						);
+					}
+				}
 
-	return z.object({
-		fields: z.array(z.enum(fields)),
-		sort: z.enum([...fields, ...fields.map((f) => `-${f}`)]),
-		limit: z.number(),
+				if (sort) {
+					const sortField = sort.startsWith("-") ? sort.substring(1) : sort;
+					if (!availableFields.includes(sortField)) {
+						throw new Error(
+							`Invalid sort field "${sortField}" for collection "${collection}"`,
+						);
+					}
+				}
+
+				const params: Record<string, any> = { ...otherParams };
+
+				if (fields && fields.length > 0) {
+					params["fields"] = fields;
+				}
+
+				if (sort) {
+					params["sort"] = sort;
+				}
+
+				const items = await directus.request(readItems(collection, params));
+				return { content: [{ type: "text", text: JSON.stringify(items) }] };
+			} catch (error: any) {
+				return {
+					content: [
+						{
+							type: "text",
+							text: JSON.stringify({
+								error: `Error: ${error?.message || "Unknown error"}`,
+							}),
+						},
+					],
+				};
+			}
+		},
 	});
 };
 
-export const createItemTools = (schema: Schema) => {
-	const tools: ToolDefinition[] = [];
-
-	for (const [collection, fields] of Object.entries(schema)) {
-		tools.push(
-			defineTool(`read-${collection.toLowerCase()}`, {
-				description: `Read items from the "${collection}" collection`,
-				inputSchema: createInputSchema(fields),
-				handler: async (directus, query) => {
-					const items = await directus.request(readItems(collection, query));
-					return { content: [{ type: "text", text: JSON.stringify(items) }] };
-				},
-			}),
-		);
-	}
-
-	return tools;
+export const getCollectionSchema = (schema: Schema, collection: string) => {
+	const fields = schema[collection] || [];
+	const description = `Collection "${collection}" has these fields: ${fields.join(", ")}`;
+	return { fields, description };
 };
