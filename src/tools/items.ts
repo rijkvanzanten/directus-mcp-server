@@ -1,4 +1,4 @@
-import { readItems } from "@directus/sdk";
+import { createItem, readItems } from "@directus/sdk";
 import * as z from "zod";
 import type { Schema } from "../types/schema.js";
 import { defineTool } from "../utils/define-tool.js";
@@ -72,6 +72,7 @@ export const createGenericReadItemsTool = () => {
 							type: "text",
 							text: JSON.stringify({
 								error: `Error: ${error?.message || "Unknown error"}`,
+								wholeError: error,
 							}),
 						},
 					],
@@ -85,4 +86,42 @@ export const getCollectionSchema = (schema: Schema, collection: string) => {
 	const fields = schema[collection] || [];
 	const description = `Collection "${collection}" has these fields: ${fields.join(", ")}`;
 	return { fields, description };
+};
+
+export const createGenericCreateItemTool = () => {
+	return defineTool("create-item", {
+		description: "Create an item in a collection. Fields are validated against the schema.",
+		inputSchema: z.object({
+			collection: z.string().describe("The name of the collection to create the item in"),
+			fields: z.record(z.string(), z.any()).describe("Fields to create the item with"),
+		}),
+		handler: async (directus, query, { schema: contextSchema }) => {
+			const { collection, fields } = query;
+
+			try {
+				if (!contextSchema[collection]) {
+					throw new Error(
+						`Collection "${collection}" not found. Use read-collections tool first.`,
+					);
+				}
+
+				// Note: For file fields, you must first upload the file using the upload-file tool
+				// and then use the returned file ID in the fields object
+				const item = await directus.request(createItem(collection, fields));
+				return { content: [{ type: "text", text: JSON.stringify({ data: item }) }] };
+			} catch (error: any) {
+				return {
+					content: [
+						{
+							type: "text",
+							text: JSON.stringify({
+								error: `Error: ${error?.message || "Unknown error"}`,
+								wholeError: error,
+							}),
+						},
+					],
+				};
+			}
+		},
+	});
 };
