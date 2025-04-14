@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 import * as z from 'zod';
 
 const configSchema = z.object({
