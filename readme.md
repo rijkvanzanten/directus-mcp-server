@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/rijkvanzanten-directus-mcp-server-badge.png)](https://mseep.ai/app/rijkvanzanten-directus-mcp-server)
+
 # Directus Model Context Protocol (MCP) Server
 
 MCP server for use with Directus. Allows your AI tools to connect to and use your Directus API on
