@@ -1,3 +1,8 @@
+> [!WARNING]
+> This was an experimental MCP server to test the waters and see what it would allow us to do. We've since released an official Directus MCP server over on https://github.com/directus/mcp 🙂
+
+---
+
 # Directus Model Context Protocol (MCP) Server
 
 MCP server for use with Directus. Allows your AI tools to connect to and use your Directus API on
